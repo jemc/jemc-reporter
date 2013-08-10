@@ -26,7 +26,7 @@ module Wires; module Test; class Reporter
       )
     end
     
-    @columns = ENV['COLUMNS'] || 80 # || `tput cols`.to_i
+    @columns = ENV['COLUMNS'] || `tput cols`.to_i || 80
     
   end
   
@@ -75,8 +75,9 @@ module Wires; module Test; class Reporter
   
   def before_suite(suite)
     return if suite.test_methods.size <= 0
-    print str_fit suite.name, \
-                  @columns-suite.test_methods.size-suite.suffix_size-1
+    length = @columns-suite.test_methods.size-suite.suffix_size
+    print str_fit(suite.name, length-1)+' '
+    
   end
   
   def after_suite(suite)
@@ -116,13 +117,11 @@ module Wires; module Test; class Reporter
     pre  = black('>')+red('>')+bold(red('>'))+' '
     pre_size  = ANSI::Code.uncolor(pre).size
     
-    name = str_fit(test, @columns-pre_size)
+    puts pre+red(str_fit(test, @columns-pre_size))
     
-    puts pre+red(name)
-    
-    print pre_size.times.map{' '}.join
-    print 'in '
-    puts runner.location(exc)
+    pre = pre_size.times.map{' '}.join + 'in '
+    pre_size  = ANSI::Code.uncolor(pre).size
+    puts pre+str_fit(runner.location(exc), @columns-pre_size)
   end
   
   def error_show(test, exc)
@@ -153,7 +152,7 @@ CODE
     raise ArgumentError, "Keyword argument :align must be :left, :right, or :center."\
       unless [:left, :right, :center].include? align
     
-    length = [0,length].max
+    length = [0,length-1].max
     diff = length - str.size
     
     # Return padded string if length is the same or to be increased
@@ -174,7 +173,9 @@ CODE
     # Return truncated midstring if length is the same or smaller than mid's size
     return mid[0...length] if length<=mid.size
     
-    indices = str.to_enum(:scan,/\b/).map{$`.size}-[0,str.size]
+    boundary_re = /((?<=[a-zA-Z])(?![a-zA-Z]))|((?<![a-zA-Z])(?=[a-zA-Z]))/
+    
+    indices = str.to_enum(:scan, boundary_re).map{$`.size}-[0,str.size]
     # p indices
     
     # Collect pairs of indices closest to desired diff
