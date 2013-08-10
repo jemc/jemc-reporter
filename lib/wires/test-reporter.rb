@@ -26,7 +26,7 @@ module Wires; module Test; class Reporter
       )
     end
     
-    @columns = ENV['COLUMNS'] || `tput cols`.to_i || 80
+    @columns = ENV['COLUMNS'] || 80 # || `tput cols`.to_i
     
   end
   
@@ -74,27 +74,13 @@ module Wires; module Test; class Reporter
   end
   
   def before_suite(suite)
-    num_tests = suite.test_methods.size
-    
-    spaces = (@columns \
-              - suite.name.size \
-              - num_tests \
-              - suite.suffix_size)
-    
-    name = suite.name
-    if spaces < 0
-      name = str_fit(name, spaces)
-      spaces = 1
-    end
-    
-    if suite.test_methods.size > 0
-      print name
-      spaces.times { print ' ' }
-    end
+    return if suite.test_methods.size <= 0
+    print str_fit suite.name, \
+                  @columns-suite.test_methods.size-suite.suffix_size-1
   end
   
   def after_suite(suite)
-    return if suite.test_methods.size == 0
+    return if suite.test_methods.size <= 0
     puts suite.suffix
     suite.tests[:fail].each  { |x| failure_show(*x) }
     suite.tests[:error].each { |x|   error_show(*x) }
