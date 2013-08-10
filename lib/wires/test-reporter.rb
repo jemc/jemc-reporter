@@ -114,18 +114,42 @@ module Wires; module Test; class Reporter
   end
   
   def failure_show(test, exc)
-    pre  = black('>')+red('>')+bold(red('>'))+' '
+    pre  = black('>')+red('>')+bold(red('F'))+' '
     pre_size  = ANSI::Code.uncolor(pre).size
-    
     puts pre+red(str_fit(test, @columns-pre_size))
     
-    pre = pre_size.times.map{' '}.join + 'in '
-    pre_size  = ANSI::Code.uncolor(pre).size
-    puts pre+str_fit(runner.location(exc), @columns-pre_size)
+    exc.backtrace.unshift runner.location(exc)+":in `'"
+    puts backtrace(exc)
+    
+    puts yellow(exc)
+    
+    puts
   end
   
   def error_show(test, exc)
+    pre  = black('>')+magenta('>')+bold(magenta('E'))+' '
+    pre_size  = ANSI::Code.uncolor(pre).size
+    puts pre+magenta(str_fit(test, @columns-pre_size))
     
+    puts backtrace(exc)
+    
+    puts yellow(exc)
+    
+    puts
+  end
+  
+  def backtrace(exception)
+    index = exception.backtrace \
+                     .find_index {|x| x=~/\/minitest\/(?=[^\/]*$).*['`]run['`]$/}
+
+    exception.backtrace.map do |line|
+      m = line.match(/(.*)(?<=\/)([^\:\/]*):(\d+)(?=:in):in ['`](.*)['`]/)
+      
+      str_fit(m[1], columns/3, :keep=>:tail, :align=>:right) \
+      + white(str_fit(m[2], columns/3-m[3].size-1, :keep=>:head))+':'+white(m[3]) \
+      + bold(cyan(str_fit(' '+m[4], (columns-2*(columns/3)), 
+                     :keep=>:head, :align=>:right))) \
+    end[0...index].reverse
   end
   
 # private
@@ -152,7 +176,7 @@ CODE
     raise ArgumentError, "Keyword argument :align must be :left, :right, or :center."\
       unless [:left, :right, :center].include? align
     
-    length = [0,length-1].max
+    length = [0,length].max
     diff = length - str.size
     
     # Return padded string if length is the same or to be increased
