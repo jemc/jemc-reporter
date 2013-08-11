@@ -83,6 +83,7 @@ module Wires; module Test; class Reporter
   def after_suite(suite)
     return if suite.test_methods.size <= 0
     puts suite.suffix
+    suite.tests[:skip].each  { |x| skipped_show(*x) }
     suite.tests[:fail].each  { |x| failure_show(*x) }
     suite.tests[:error].each { |x|   error_show(*x) }
   end
@@ -100,7 +101,7 @@ module Wires; module Test; class Reporter
   
   def skip(suite, test, test_runner)
     print blue('s')
-    suite.tests[:pass]  << [test, test_runner.exception]
+    suite.tests[:skip]  << [test, test_runner.exception]
   end
   
   def failure(suite, test, test_runner)
@@ -111,6 +112,12 @@ module Wires; module Test; class Reporter
   def error(suite, test, test_runner)
     print magenta('E')
     suite.tests[:error] << [test, test_runner.exception]
+  end
+  
+  def skipped_show(test, exc)
+    pre  = black('>')+blue('>')+bold(blue('s'))+' '
+    pre_size  = ANSI::Code.uncolor(pre).size
+    puts pre+blue(str_fit(test, @columns-pre_size))
   end
   
   def failure_show(test, exc)
@@ -151,8 +158,6 @@ module Wires; module Test; class Reporter
                      :keep=>:head, :align=>:right))) \
     end[0...index].reverse
   end
-  
-# private
   
   # [:black, :red, :green, :yellow, :blue, :magenta, :cyan, :white]
   for color in ANSI::Code.colors+[:bold]
