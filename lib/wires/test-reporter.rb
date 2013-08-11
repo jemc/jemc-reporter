@@ -90,8 +90,9 @@ module Wires; module Test; class Reporter
   
   def after_suites(suites, type)
     puts
-    # puts "# Done running #{type}s."
-    # puts
+    puts '%d tests, %d assertions, %d failures, %d errors, %d skips' %
+      [runner.test_count, runner.assertion_count, \
+       runner.failures, runner.errors, runner.skips]
   end
   
   def pass(suite, test, test_runner)
