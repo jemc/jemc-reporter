@@ -142,15 +142,16 @@ module JEMC; class Reporter
   
   def backtrace(exception)
     index = exception.backtrace \
-                     .find_index {|x| x=~/\/minitest\/(?=[^\/]*$).*['`]run['`]$/}
+                     .find_index{|x| x=~/\/minitest\/(?=[^\/]*$).*['`]run['`]$/}
 
     exception.backtrace.map do |line|
-      m = line.match(/(.*)(?<=\/)([^\:\/]*):(\d+)(?=:in):in ['`](.*)['`]/)
+      m = line.match /(.*)(?<=\/)([^\:\/]*):(\d+)(?=:in):in ['`](.*)['`]/
+      m ||= line.match        /()([^\:\/]*):(\d+)(?=:in):in ['`](.*)['`]/
       
       str_fit(m[1], columns/3, :keep=>:tail, :align=>:right) \
       + white(str_fit(m[2], columns/3-m[3].size-1, :keep=>:head))+':'+white(m[3]) \
-      + bold(cyan(str_fit(' '+m[4], (columns-2*(columns/3)), 
-                     :keep=>:head, :align=>:right))) \
+      + bold(cyan(str_fit(' '+m[4], (columns-2*(columns/3)), \
+                     :keep=>:head, :align=>:right)))
     end[0...index].reverse
   end
   
