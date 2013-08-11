@@ -1,13 +1,9 @@
 gem     'minitest-reporters'
 require 'minitest/reporters'
-
+gem     'ansi'
 require 'ansi/code'
-require 'pp'
 
-
-
-
-module Wires; module Test; class Reporter
+module JEMC; class Reporter
   include Minitest::Reporter
   
   attr_accessor :color, :columns, :max_tests
@@ -32,8 +28,6 @@ module Wires; module Test; class Reporter
   
   def before_suites(suites, type)
     puts
-    # puts "# Running #{type}s:"
-    # puts
     
     self.max_tests = suites.map{|x| x.test_methods.size}.max
     
@@ -263,10 +257,6 @@ CODE
     
   end
   
-end end end
+end end
 
-Minitest::Reporters.use! Wires::Test::Reporter.new
-# Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
-
-# p ANSI::Code.methods-Module.instance_methods
-# p ANSI::Code.colors
+Minitest::Reporters.use! JEMC::Reporter.new
