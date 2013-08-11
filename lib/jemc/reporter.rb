@@ -143,7 +143,8 @@ module JEMC; class Reporter
   def backtrace(exception)
     index = exception.backtrace \
                      .find_index{|x| x=~/\/minitest\/(?=[^\/]*$).*['`]run['`]$/}
-
+    index ||= -1
+    
     exception.backtrace.map do |line|
       m = line.match /(.*)(?<=\/)([^\:\/]*):(\d+)(?=:in):in ['`](.*)['`]/
       m ||= line.match        /()([^\:\/]*):(\d+)(?=:in):in ['`](.*)['`]/
