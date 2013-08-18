@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name          = 'jemc-reporter'
-  s.version       = '0.1.3'
-  s.date          = '2013-08-11'
+  s.version       = '0.1.4'
+  s.date          = '2013-08-18'
   s.summary       = "jemc-reporter"
   s.description   = "A custom minitest reporter made to my"\
                     " personal aesthetic specifications."
