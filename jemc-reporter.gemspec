@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://github.com/jemc/jemc-reporter/'
   s.licenses      = "Copyright (c) Joe McIlvain. All rights reserved "
   
-  s.add_dependency('minitest', '~> 4.3')
+  s.add_dependency('minitest', '~> 4.3.2')
   s.add_dependency('minitest-reporters')
   s.add_dependency('ansi')
   

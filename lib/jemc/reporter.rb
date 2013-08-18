@@ -1,3 +1,4 @@
+gem     'minitest', '~> 4.3.2'
 gem     'minitest-reporters'
 require 'minitest/reporters'
 gem     'ansi'
