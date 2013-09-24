@@ -124,7 +124,7 @@ module JEMC; class Reporter
     exc.backtrace.unshift runner.location(exc)+":in `'"
     puts backtrace(exc)
     
-    puts yellow(exc)
+    puts yellow("#{exc.class}: #{exc.message}")
     
     puts
   end
@@ -136,7 +136,7 @@ module JEMC; class Reporter
     
     puts backtrace(exc)
     
-    puts yellow(exc)
+    puts yellow("#{exc.class}: #{exc.message}")
     
     puts
   end
